@@ -1,5 +1,4 @@
-﻿using MetaExchange.Application.DTOs;
-using MetaExchange.Application.Interfaces.DataSource;
+﻿using MetaExchange.Application.Interfaces.DataSource;
 using MetaExchange.Application.Interfaces.Matcher;
 using MetaExchange.ConsoleApp.Core.Config;
 using MetaExchange.Domain;
@@ -18,36 +17,61 @@ public class ConsolePresenter(
 
     public async Task RunAsync()
     {
-        Console.WriteLine("MetaExchange - BTC");
+        Console.WriteLine("MetaExchange - BTC Console");
 
-        Console.Write("Order type (Buy/Sell): ");
-        var type = Enum.Parse<OrderType>(Console.ReadLine()!, true);
-
-        Console.Write("Enter BTC amount: ");
-
-        var btcAmount = decimal.Parse(Console.ReadLine()!);
-
-        Console.WriteLine("\nLoading order book...");
-        List<OrderBook> orderBooks = await loader.LoadOrderBooksAsync(_filePath);
-
-        List<MatchedOrder> matches = matcher.MatchOrders(orderBooks, type, btcAmount);
-
-        if (matches.Count == 0)
+        while (true)
         {
-            Console.WriteLine("No viable offers.");
-            return;
+            try
+            {
+                Console.Write("\nOrder type (Buy/Sell or Q to quit): ");
+                var inputType = Console.ReadLine()?.Trim();
+
+                if (string.Equals(inputType, "Q", StringComparison.OrdinalIgnoreCase))
+                {
+                    break;
+                }
+
+                if (!Enum.TryParse<OrderType>(inputType, true, out var orderType))
+                {
+                    Console.WriteLine("Invalid order type. Please enter 'Buy' or 'Sell'.");
+                    continue;
+                }
+
+                Console.Write("Enter BTC amount: ");
+                var amountInput = Console.ReadLine();
+                if (!decimal.TryParse(amountInput, out var btcAmount) || btcAmount <= 0)
+                {
+                    Console.WriteLine("Invalid BTC amount. Please enter a positive decimal number.");
+                    continue;
+                }
+
+                Console.WriteLine("\nLoading order book...");
+                var orderBooks = await loader.LoadOrderBooksAsync(_filePath);
+
+                var matches = matcher.MatchOrders(orderBooks, orderType, btcAmount);
+
+                if (matches.Count == 0)
+                {
+                    Console.WriteLine("No viable offers found for the requested amount.");
+                    continue;
+                }
+
+                Console.WriteLine($"\n{matches.Count} matched orders:");
+                foreach (var match in matches)
+                {
+                    var total = match.Order.Price * match.UsedAmount;
+                    Console.WriteLine($"- {match.Exchange}, Price: {match.Order.Price}, Amount: {match.UsedAmount}, Total: {total:F2}");
+                }
+
+                var grandTotal = matches.Sum(x => x.Order.Price * x.UsedAmount);
+                var totalAmount = matches.Sum(x => x.UsedAmount);
+                var label = orderType == OrderType.Buy ? "Cost" : "Revenue";
+                Console.WriteLine($"\nTotal {label}: {grandTotal:F2} EUR for {totalAmount} BTC");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An unexpected error occurred: {ex.Message}");
+            }
         }
-
-        Console.WriteLine($"\n {matches.Count} matched orders:");
-
-        foreach (var match in matches)
-        {
-            Console.WriteLine($"- {match.Exchange}, Price: {match.Order.Price}, Amount: {match.UsedAmount}," +
-                $" Total: {match.Order.Price * match.UsedAmount:F2}");
-        }
-
-        var total = matches.Sum(x => x.Order.Price * x.UsedAmount);
-        Console.WriteLine($"\nTotal {(type == OrderType.Buy ? "Cost" : "Revenue")}: {total:F2} EUR " +
-           $"for {matches.Sum(m => m.UsedAmount)} BTC");
     }
 }
