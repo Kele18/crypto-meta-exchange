@@ -2,18 +2,11 @@
 
 namespace MetaExchange.Application.DTOs
 {
-    public abstract class OrderCandidateBase
+    public abstract class OrderCandidateBase(string exchangeName, Order order, decimal maxAmount)
     {
-        protected OrderCandidateBase(string exchangeName, Order order, decimal maxAmount)
-        {
-            ExchangeName = exchangeName;
-            Order = order;
-            MaxAmount = maxAmount;
-        }
-
-        public string ExchangeName { get; }
-        public Order Order { get; }
-        public decimal MaxAmount { get; }
+        public string ExchangeName { get; } = exchangeName;
+        public Order Order { get; } = order;
+        public decimal MaxAmount { get; } = maxAmount;
 
         public bool IsViable => MaxAmount > 0;
     }

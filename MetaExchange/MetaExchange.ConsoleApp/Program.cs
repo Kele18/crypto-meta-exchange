@@ -1,4 +1,5 @@
-﻿using MetaExchange.Application.Interfaces.DataSource;
+﻿using MetaExchange.Application.Interfaces;
+using MetaExchange.Application.Interfaces.DataSource;
 using MetaExchange.Application.Interfaces.Matcher;
 using MetaExchange.Application.Services;
 using MetaExchange.ConsoleApp.Core.Config;
@@ -32,6 +33,7 @@ public static class Program
                     var config = provider.GetRequiredService<IOptions<AppConfig>>().Value;
                     return new JsonBalanceProvider(config.BalancePath);
                 });
+                services.AddSingleton<IConsoleIO, ConsoleIO>();
             })
             .Build();
 
