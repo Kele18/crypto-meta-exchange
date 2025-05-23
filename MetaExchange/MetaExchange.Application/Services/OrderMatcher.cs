@@ -5,23 +5,12 @@ using MetaExchange.Domain;
 
 namespace MetaExchange.Application.Services
 {
-    public class OrderMatcher : IOrderMatcher
+    public class OrderMatcher(IOrderMatchingStrategyFactory factory) : IOrderMatcher
     {
-        private readonly Dictionary<OrderType, IOrderMatchingStrategy> _strategies;
-
-        public OrderMatcher()
+        public List<MatchedOrder> MatchOrders(List<OrderBook> books, OrderType type, decimal targetAmount)
         {
-            _strategies = new()
-            {
-                [OrderType.Buy] = new BuyOrderMatchingStrategy(),
-                [OrderType.Sell] = new SellOrderMatchingStrategy()
-            };
-        }
-
-        public List<MatchedOrder> MatchOrders(
-            List<OrderBook> books, OrderType type, decimal targetAmount)
-        {
-            return _strategies[type].Match(books, targetAmount);
+            var strategy = factory.Create(type);
+            return strategy.Match(books, targetAmount);
         }
     }
 }
