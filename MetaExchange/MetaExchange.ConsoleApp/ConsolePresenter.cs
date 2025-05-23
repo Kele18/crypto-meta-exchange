@@ -13,8 +13,7 @@ public class ConsolePresenter(
     IOptions<AppConfig> configOptions)
 {
     private readonly string _filePath = Path.Combine(
-        Path.GetFullPath(configOptions.Value.OrderBookPath),
-        "order_books_data.json"
+        Path.GetFullPath(configOptions.Value.OrderBookPath)
     );
 
     public async Task RunAsync()
@@ -25,10 +24,11 @@ public class ConsolePresenter(
         var type = Enum.Parse<OrderType>(Console.ReadLine()!, true);
 
         Console.Write("Enter BTC amount: ");
+
         var btcAmount = decimal.Parse(Console.ReadLine()!);
 
         Console.WriteLine("\nLoading order book...");
-        var orderBooks = await loader.LoadOrderBooksAsync(_filePath);
+        List<OrderBook> orderBooks = await loader.LoadOrderBooksAsync(_filePath);
 
         List<MatchedOrder> matches = matcher.MatchOrders(orderBooks, type, btcAmount);
 
@@ -47,6 +47,7 @@ public class ConsolePresenter(
         }
 
         var total = matches.Sum(x => x.Order.Price * x.UsedAmount);
-        Console.WriteLine($"\nTotal {(type == OrderType.Buy ? "Cost" : "Revenue")}: {total:F2} EUR");
+        Console.WriteLine($"\nTotal {(type == OrderType.Buy ? "Cost" : "Revenue")}: {total:F2} EUR " +
+           $"for {matches.Sum(m => m.UsedAmount)} BTC");
     }
 }

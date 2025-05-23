@@ -1,4 +1,5 @@
 ﻿using MetaExchange.Application.DTOs;
+using MetaExchange.Application.DTOs.MetaExchange.Application.Models;
 using MetaExchange.Application.Interfaces.Strategies;
 using MetaExchange.Domain;
 
@@ -8,27 +9,39 @@ namespace MetaExchange.Application.Services
     {
         public List<MatchedOrder> Match(List<OrderBook> books, decimal targetAmount)
         {
-            var results = new List<MatchedOrder>();
-            var allOrders = books
-                            .SelectMany(b =>
-                                  b.Asks.Select(order => (b.ExchangeName, order, MaxBuyableAmount(order, b))))
-                                        .Where(x => x.Item3 > 0)
-                                        .OrderBy(x => x.order.Price)
-                                        .ToList();
+            var candidates = CreateBuyOrderCandidates(books)
+                             .Where(c => c.IsViable)
+                             .OrderBy(c => c.Order.Price)
+                             .ToList();
 
+            var results = new List<MatchedOrder>();
             decimal remaining = targetAmount;
-            foreach (var (exchange, order, maxAvailable) in allOrders)
+
+            foreach (var candidate in candidates)
             {
                 if (remaining <= 0) break;
-                var toUse = Math.Min(remaining, maxAvailable);
-                results.Add(new MatchedOrder(exchange, order, toUse));
+
+                decimal toUse = Math.Min(remaining, candidate.MaxBuyableAmount);
+                results.Add(new MatchedOrder(candidate.ExchangeName, candidate.Order, toUse));
                 remaining -= toUse;
             }
 
             return remaining > 0 ? [] : results;
         }
 
-        private decimal MaxBuyableAmount(Order order, OrderBook book)
+        private IEnumerable<BuyOrderCandidate> CreateBuyOrderCandidates(List<OrderBook> books)
+        {
+            foreach (var book in books)
+            {
+                foreach (var ask in book.Asks)
+                {
+                    decimal maxBuyable = CalculateMaxBuyableAmount(ask, book);
+                    yield return new BuyOrderCandidate(book.ExchangeName, ask, maxBuyable);
+                }
+            }
+        }
+
+        private decimal CalculateMaxBuyableAmount(Order order, OrderBook book)
         {
             return Math.Min(order.Amount, book.AvailableEur / order.Price);
         }
