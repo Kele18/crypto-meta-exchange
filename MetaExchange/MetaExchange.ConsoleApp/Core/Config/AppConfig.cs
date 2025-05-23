@@ -2,6 +2,7 @@
 {
     public class AppConfig
     {
-        public string OrderBookPath { get; set; } = string.Empty;
+        public string OrderBookPath { get; set; } = default!;
+        public string BalancePath { get; set; } = default!;
     }
 }

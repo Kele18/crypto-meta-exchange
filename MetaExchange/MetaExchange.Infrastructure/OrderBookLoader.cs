@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace MetaExchange.Infrastructure
 {
-    public class OrderBookLoader : IOrderBookLoader
+    public class OrderBookLoader(IBalanceProvider balanceProvider) : IOrderBookLoader
     {
         private static readonly Dictionary<string, List<OrderBook>> _cache = [];
         private static readonly object _lock = new();
@@ -26,13 +26,25 @@ namespace MetaExchange.Infrastructure
                 var line = await reader.ReadLineAsync();
                 if (line is null) continue;
 
-                OrderBook? book = JsonSerializer.Deserialize<OrderBook>(line, new JsonSerializerOptions
+                int jsonStart = line.IndexOf('{');
+                if (jsonStart < 0) continue;
+
+                string json = line[jsonStart..];
+
+                OrderBook? book = JsonSerializer.Deserialize<OrderBook>(json, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 });
 
                 if (book != null)
+                {
+                    book.ExchangeName ??= $"Exchange_{orderBooks.Count + 1}";
+
+                    var balance = balanceProvider.GetBalance(book!.ExchangeName);
+                    book.AvailableEur = balance.AvailableEur;
+                    book.AvailableBtc = balance.AvailableBtc;
                     orderBooks.Add(book);
+                }
             }
 
             lock (_lock)

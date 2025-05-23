@@ -1,12 +1,21 @@
-﻿namespace MetaExchange.Domain
+﻿using System.Text.Json.Serialization;
+
+namespace MetaExchange.Domain
 {
-    public sealed class Order
+    [method: JsonConstructor]
+    public sealed class Order(
+        Guid? id,
+        DateTime time,
+        OrderType type,
+        string kind,
+        decimal amount,
+        decimal price)
     {
-        public Guid? Id { get; init; }
-        public DateTime Time { get; init; }
-        public OrderType Type { get; init; }
-        public string Kind { get; init; } = default!;
-        public decimal Amount { get; set; }
-        public decimal Price { get; set; }
+        public Guid? Id { get; } = id;
+        public DateTime Time { get; } = time;
+        public OrderType Type { get; } = type;
+        public string Kind { get; } = kind;
+        public decimal Amount { get; } = amount;
+        public decimal Price { get; } = price;
     }
 }
