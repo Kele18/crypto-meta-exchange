@@ -1,4 +1,5 @@
-﻿using MetaExchange.Application;
+﻿using MetaExchange.Application.Interfaces.DataSource;
+using MetaExchange.Application.Interfaces.Matcher;
 using MetaExchange.Application.Services;
 using MetaExchange.ConsoleApp.Core.Config;
 using MetaExchange.Infrastructure;

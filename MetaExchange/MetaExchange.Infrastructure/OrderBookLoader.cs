@@ -1,4 +1,4 @@
-﻿using MetaExchange.Application;
+﻿using MetaExchange.Application.Interfaces.DataSource;
 using MetaExchange.Domain;
 using System.Text.Json;
 
@@ -6,11 +6,19 @@ namespace MetaExchange.Infrastructure
 {
     public class OrderBookLoader : IOrderBookLoader
     {
+        private static readonly Dictionary<string, List<OrderBook>> _cache = [];
+        private static readonly object _lock = new();
+
         public async Task<List<OrderBook>> LoadOrderBooksAsync(string path)
         {
-            var orderBooks = new List<OrderBook>();
+            lock (_lock)
+            {
+                if (_cache.TryGetValue(path, out var cachedBooks))
+                    return cachedBooks;
+            }
 
-            using var stream = File.OpenRead(path);
+            var orderBooks = new List<OrderBook>();
+            await using var stream = File.OpenRead(path);
             using var reader = new StreamReader(stream);
 
             while (!reader.EndOfStream)
@@ -25,6 +33,11 @@ namespace MetaExchange.Infrastructure
 
                 if (book != null)
                     orderBooks.Add(book);
+            }
+
+            lock (_lock)
+            {
+                _cache[path] = orderBooks;
             }
 
             return orderBooks;

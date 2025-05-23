@@ -1,6 +1,6 @@
 ﻿using MetaExchange.Domain;
 
-namespace MetaExchange.Application
+namespace MetaExchange.Application.Interfaces.DataSource
 {
     public interface IOrderBookLoader
     {

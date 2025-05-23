@@ -1,0 +1,5 @@
+{
+  "Exchange_1": { "AvailableEur": 10000, "AvailableBtc": 5 },
+  "Exchange_2": { "AvailableEur": 8000,  "AvailableBtc": 3.2 },
+  "Exchange_3": { "AvailableEur": 15000, "AvailableBtc": 1.8 }
+}
