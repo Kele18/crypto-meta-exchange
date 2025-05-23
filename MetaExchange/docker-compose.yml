@@ -1,0 +1,8 @@
+services:
+  metaexchange-api:
+    build:
+      context: .
+      dockerfile: MetaExchange.WebAPI/Dockerfile
+    container_name: metaexchange
+    volumes:
+      - ./Data:/app/Data

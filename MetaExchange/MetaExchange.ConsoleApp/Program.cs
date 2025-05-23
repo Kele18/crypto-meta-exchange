@@ -1,14 +1,9 @@
 ﻿using MetaExchange.Application.Interfaces;
-using MetaExchange.Application.Interfaces.DataSource;
-using MetaExchange.Application.Interfaces.Matcher;
-using MetaExchange.Application.Interfaces.Strategies;
-using MetaExchange.Application.Services;
-using MetaExchange.ConsoleApp.Core.Config;
 using MetaExchange.Infrastructure;
+using MetaExchange.SharedKernel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 
 namespace MetaExchange.ConsoleApp;
 
@@ -24,17 +19,9 @@ public static class Program
             })
             .ConfigureServices((context, services) =>
             {
-                services.Configure<AppConfig>(context.Configuration.GetSection(nameof(AppConfig)));
+                services.AddMetaExchangeServices(context.Configuration);
 
-                services.AddScoped<IOrderBookLoader, OrderBookLoader>();
-                services.AddScoped<IOrderMatcher, OrderMatcher>();
-                services.AddScoped<IOrderMatchingStrategyFactory, OrderMatchingStrategyFactory>();
                 services.AddScoped<ConsolePresenter>();
-                services.AddSingleton<IBalanceProvider>(provider =>
-                {
-                    var config = provider.GetRequiredService<IOptions<AppConfig>>().Value;
-                    return new JsonBalanceProvider(config.BalancePath);
-                });
                 services.AddSingleton<IConsoleIO, ConsoleIO>();
             })
             .Build();

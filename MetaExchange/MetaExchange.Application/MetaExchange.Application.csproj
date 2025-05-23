@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\MetaExchange.Domain\MetaExchange.Domain.csproj" />
   </ItemGroup>
 
