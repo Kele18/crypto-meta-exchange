@@ -26,28 +26,12 @@ namespace MetaExchange.ConsoleApp
             {
                 try
                 {
-                    console.Write("Order type (Buy/Sell) or Q to quit: ");
-                    var input = console.ReadLine();
-                    if (string.Equals(input, "q", StringComparison.OrdinalIgnoreCase)) break;
-
-                    if (!Enum.TryParse<OrderType>(input, true, out var type))
-                    {
-                        console.WriteLine("Invalid input. Please type Buy or Sell.");
-                        continue;
-                    }
-
-                    console.Write("Enter BTC amount: ");
-                    var btcInput = console.ReadLine();
-                    if (!decimal.TryParse(btcInput, out var btcAmount))
-                    {
-                        console.WriteLine("Invalid BTC amount.");
-                        continue;
-                    }
+                    var request = PromptOrderRequest();
+                    if (request is null) break;
 
                     console.WriteLine("\nLoading order book...");
                     List<OrderBook> orderBooks = await loader.LoadOrderBooksAsync(_filePath);
-
-                    List<MatchedOrder> matches = matcher.MatchOrders(orderBooks, type, btcAmount);
+                    List<MatchedOrder> matches = matcher.MatchOrders(orderBooks, request.Type, request.Amount);
 
                     if (matches.Count == 0)
                     {
@@ -55,16 +39,7 @@ namespace MetaExchange.ConsoleApp
                         continue;
                     }
 
-                    console.WriteLine($"\n{matches.Count} matched orders:");
-                    foreach (var match in matches)
-                    {
-                        var total = match.Order.Price * match.UsedAmount;
-                        console.WriteLine($"- {match.Exchange}, Price: {match.Order.Price}, Amount: {match.UsedAmount}, Total: {total:F2}");
-                    }
-
-                    var totalCost = matches.Sum(x => x.Order.Price * x.UsedAmount);
-                    var totalBtc = matches.Sum(x => x.UsedAmount);
-                    console.WriteLine($"\nTotal {(type == OrderType.Buy ? "Cost" : "Revenue")}: {totalCost:F2} EUR for {totalBtc} BTC\n");
+                    PresentResult(matches, request.Type);
                 }
                 catch (Exception ex)
                 {
@@ -72,7 +47,49 @@ namespace MetaExchange.ConsoleApp
                 }
             }
 
-            console.WriteLine("Session ended. Goodbye!");
+            console.WriteLine("Session ended!");
+        }
+
+        private OrderRequest? PromptOrderRequest()
+        {
+            console.Write("Order type (Buy/Sell) or Q to quit: ");
+            var input = console.ReadLine();
+
+            if (string.Equals(input, "q", StringComparison.OrdinalIgnoreCase))
+                return null;
+
+            if (!Enum.TryParse<OrderType>(input, true, out var type))
+            {
+                console.WriteLine("Invalid input. Please type Buy or Sell.");
+                return PromptOrderRequest();
+            }
+
+            console.Write("Enter BTC amount: ");
+            var amountInput = console.ReadLine();
+
+            if (!decimal.TryParse(amountInput, out var amount) || amount <= 0)
+            {
+                console.WriteLine("Invalid BTC amount.");
+                return PromptOrderRequest();
+            }
+
+            return new OrderRequest { Type = type, Amount = amount };
+        }
+
+        private void PresentResult(List<MatchedOrder> matches, OrderType type)
+        {
+            console.WriteLine($"\n{matches.Count} matched orders:");
+            foreach (var match in matches)
+            {
+                var total = match.Order.Price * match.UsedAmount;
+                console.WriteLine($"- {match.Exchange}, Price: {match.Order.Price}, Amount: {match.UsedAmount}, Total: {total:F2}");
+            }
+
+            var totalCost = matches.Sum(x => x.Order.Price * x.UsedAmount);
+            var totalBtc = matches.Sum(x => x.UsedAmount);
+            var label = type == OrderType.Buy ? "Cost" : "Revenue";
+
+            console.WriteLine($"\nTotal {label}: {totalCost:F2} EUR for {totalBtc} BTC\n");
         }
     }
 }

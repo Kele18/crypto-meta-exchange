@@ -1,6 +1,7 @@
 ﻿using MetaExchange.Application.Interfaces;
 using MetaExchange.Application.Interfaces.DataSource;
 using MetaExchange.Application.Interfaces.Matcher;
+using MetaExchange.Application.Interfaces.Strategies;
 using MetaExchange.Application.Services;
 using MetaExchange.ConsoleApp.Core.Config;
 using MetaExchange.Infrastructure;
@@ -27,6 +28,7 @@ public static class Program
 
                 services.AddScoped<IOrderBookLoader, OrderBookLoader>();
                 services.AddScoped<IOrderMatcher, OrderMatcher>();
+                services.AddScoped<IOrderMatchingStrategyFactory, OrderMatchingStrategyFactory>();
                 services.AddScoped<ConsolePresenter>();
                 services.AddSingleton<IBalanceProvider>(provider =>
                 {
