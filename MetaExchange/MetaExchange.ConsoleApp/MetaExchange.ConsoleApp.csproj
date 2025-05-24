@@ -26,5 +26,19 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+	<ItemGroup>
+		<None Update="appsettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="..\Data\balances.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Link>Data\balances.json</Link>
+		</None>
+		<None Update="..\Data\order_book_test\**\*.*">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Link>Data\order_book_test\%(RecursiveDir)%(Filename)%(Extension)</Link>
+		</None>
+	</ItemGroup>
+
 
 </Project>
