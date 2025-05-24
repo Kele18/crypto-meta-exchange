@@ -1,9 +1,12 @@
-﻿namespace MetaExchange.Application.DTOs
+﻿namespace MetaExchange.Application.DTOs;
+
+public sealed record OrderResponse(
+    decimal TotalEur,
+    decimal TotalBtc,
+    IReadOnlyList<MatchedOrder> Orders
+)
 {
-    public class OrderResponse
-    {
-        public decimal TotalEur { get; set; }
-        public decimal TotalBtc { get; set; }
-        public List<MatchedOrder> Orders { get; set; } = [];
-    }
+    public static readonly OrderResponse Empty = new(0, 0, []);
+
+    public bool IsEmpty => Orders.Count == 0;
 }

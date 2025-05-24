@@ -22,15 +22,13 @@ namespace MetaExchange.Application.Services.UseCase
 
             if (matches.Count == 0)
             {
-                return new OrderResponse();
+                return OrderResponse.Empty;
             }
 
-            return new OrderResponse
-            {
-                TotalBtc = matches.Sum(x => x.UsedAmount),
-                TotalEur = matches.Sum(x => x.Order.Price * x.UsedAmount),
-                Orders = matches
-            };
+            return new OrderResponse(
+                      TotalEur: matches.Sum(x => x.Order.Price * x.UsedAmount),
+                      TotalBtc: matches.Sum(x => x.UsedAmount),
+                      Orders: matches);
         }
     }
 }
