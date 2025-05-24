@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetaExchange.SharedKernel",
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{1BEB1173-8C16-4860-810D-42A8D78A8590}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetaExchange.WebApi.Tests", "MetaExchange.WebApi.Tests\MetaExchange.WebApi.Tests.csproj", "{894CF4C8-AA69-4574-B89B-D5F8F10FBF79}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,10 @@ Global
 		{1BEB1173-8C16-4860-810D-42A8D78A8590}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1BEB1173-8C16-4860-810D-42A8D78A8590}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1BEB1173-8C16-4860-810D-42A8D78A8590}.Release|Any CPU.Build.0 = Release|Any CPU
+		{894CF4C8-AA69-4574-B89B-D5F8F10FBF79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{894CF4C8-AA69-4574-B89B-D5F8F10FBF79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{894CF4C8-AA69-4574-B89B-D5F8F10FBF79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{894CF4C8-AA69-4574-B89B-D5F8F10FBF79}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -86,5 +92,6 @@ Global
 		{8C123827-719F-4A05-8AF8-874D506BD5C6} = {A22C27CC-9E4A-45FE-B496-C99D1CABCCC8}
 		{AF2DAB7E-70B8-4AEA-A9F0-F9296B836A43} = {A22C27CC-9E4A-45FE-B496-C99D1CABCCC8}
 		{ADF9774D-996F-4AE5-9C92-2C635E9576A8} = {A22C27CC-9E4A-45FE-B496-C99D1CABCCC8}
+		{894CF4C8-AA69-4574-B89B-D5F8F10FBF79} = {A22C27CC-9E4A-45FE-B496-C99D1CABCCC8}
 	EndGlobalSection
 EndGlobal
