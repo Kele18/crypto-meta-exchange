@@ -9,8 +9,8 @@ namespace MetaExchange.Application.Services
         public List<MatchedOrder> Match(List<OrderBook> books, decimal targetAmount)
         {
             var candidates = CreateSellOrderCandidates(books)
-                             .Where(c => c.IsViable)
-                             .OrderByDescending(c => c.Order.Price)
+                             .Where(i => i.IsViable)
+                             .OrderByDescending(j => j.Order.Price)
                              .ToList();
 
             return MatchSellOrders(candidates, targetAmount);

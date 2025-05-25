@@ -10,8 +10,8 @@ namespace MetaExchange.Application.Services
         public List<MatchedOrder> Match(List<OrderBook> books, decimal targetAmount)
         {
             var candidates = CreateBuyOrderCandidates(books)
-                             .Where(c => c.IsViable)
-                             .OrderBy(c => c.Order.Price)
+                             .Where(i => i.IsViable)
+                             .OrderBy(j => j.Order.Price)
                              .ToList();
 
             var results = new List<MatchedOrder>();

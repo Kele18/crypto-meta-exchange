@@ -16,9 +16,9 @@ namespace MetaExchange.Application.Services.UseCase
             string filePath = Path.Combine(
             Path.GetFullPath(config["AppConfig:OrderBookPath"]!));
 
-            var books = await loader.LoadOrderBooksAsync(filePath);
+            List<Domain.OrderBook> orderBooks = await loader.LoadOrderBooksAsync(filePath);
 
-            var matches = matcher.MatchOrders(books, request.Type, request.Amount);
+            List<MatchedOrder> matches = matcher.MatchOrders(orderBooks, request.Type, request.Amount);
 
             if (matches.Count == 0)
             {
