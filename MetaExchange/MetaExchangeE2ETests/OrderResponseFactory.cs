@@ -27,8 +27,8 @@ namespace MetaExchangeE2ETests
 
         public static OrderResponse CreateExpectedSellResponse()
         {
-            var order1 = new Order(Guid.Empty, DateTime.MinValue, OrderType.Buy, "Limit", 0.01m, 2960.67m);
-            var order2 = new Order(Guid.Empty, DateTime.MinValue, OrderType.Buy, "Limit", 1.11117578m, 2960.65m);
+            var order1 = new Order(null, DateTime.MinValue, OrderType.Buy, "Limit", 0.01m, 2960.67m);
+            var order2 = new Order(null, DateTime.MinValue, OrderType.Buy, "Limit", 1.11117578m, 2960.65m);
 
             var matches = new List<MatchedOrder>
         {
